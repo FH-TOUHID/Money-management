@@ -1,0 +1,82 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "Demo User",
+      "email": "demo@gmail.com",
+      "password": "123456",
+      "profile": {
+        "phone": "01700000000",
+        "address": "Dhaka, Bangladesh",
+        "occupation": "Student",
+        "currency": "৳",
+        "income": 56000,
+        "budget": 20000,
+        "monthlyBudgets": {
+          "2026-06": 20000
+        }
+      },
+      "theme": {
+        "name": "violet-dark",
+        "label": "Violet Dark",
+        "accent": "#6366F1",
+        "accent2": "#8B5CF6",
+        "success": "#10B981",
+        "danger": "#EF4444",
+        "warning": "#F59E0B",
+        "bg": "#0F1117",
+        "sidebar": "#13151F",
+        "card": "#1A1D2E",
+        "cardHover": "#1F2235",
+        "field": "#13151F",
+        "border": "#252838",
+        "border2": "#1E2133",
+        "text": "#E2E5F1",
+        "textSoft": "#C4C9E8",
+        "muted": "#4B5280",
+        "muted2": "#9DA3C8"
+      },
+      "expenses": []
+    },
+    {
+      "id": "RfphON6vR-I",
+      "username": "touhid",
+      "email": "touhid@gmail.com",
+      "password": "t1o2uhid",
+      "profile": {
+        "phone": "",
+        "address": "",
+        "occupation": "",
+        "currency": "৳",
+        "income": 0,
+        "budget": 320,
+        "monthlyBudgets": {
+          "2026-06": 320
+        }
+      },
+      "theme": {
+        "name": "violet-dark",
+        "label": "Violet Dark",
+        "mode": "dark",
+        "accent": "#6366F1",
+        "accent2": "#8B5CF6",
+        "success": "#10B981",
+        "danger": "#EF4444",
+        "warning": "#F59E0B",
+        "bg": "#0F1117",
+        "sidebar": "#13151F",
+        "card": "#1A1D2E",
+        "cardHover": "#1F2235",
+        "field": "#13151F",
+        "border": "#252838",
+        "border2": "#1E2133",
+        "text": "#E2E5F1",
+        "textSoft": "#C4C9E8",
+        "muted": "#4B5280",
+        "muted2": "#9DA3C8"
+      },
+      "expenses": []
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
