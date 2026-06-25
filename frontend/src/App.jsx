@@ -1,37 +1,12 @@
-// import React, { useEffect } from 'react'
-// import {useDispatch} from "react-redux";
-// import { asyncgetusers } from './store/useraction';
-// import LoginPage from './pages/LoginPage';
-// const App = () => {
-//   // const dispatch=useDispatch();
-
-//   // useEffect(()=>dispatch(asyncgetusers()),[]);
-//   return (
-//      <LoginPage/>
-//   )
-// }
-
-// export default App
-
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AppRoute from "./routes/Route";
 
+/**
+ * Top-level shell. All routing/redirect decisions live in `routes/Route.jsx`
+ * so "where do I send the user on first paint?" has exactly one answer.
+ * Keeping `App.jsx` free of `useEffect` + `useNavigate` here also means
+ * `Home` won't get unmounted/remounted by stray re-navigations.
+ */
 function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
-
-    if (user) {
-      navigate("/");
-    } else {
-      navigate("/login");
-    }
-  }, []);
-
   return <AppRoute />;
 }
 

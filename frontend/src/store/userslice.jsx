@@ -390,8 +390,11 @@ export const registerUser = createAsyncThunk(
       if (res.data.length > 0) return rejectWithValue("Email already exists");
 
       const currentMonth = getMonthKey();
+      // json-server stores ids as strings in the URL (`/users/<id>`), so we
+      // normalise to a string up-front. Storing a number used to work but
+      // caused inconsistent coercion later when matching against records.
       const newUser = normalizeUser({
-        id: Date.now(),
+        id: String(Date.now()),
         username: username.trim(),
         email: cleanEmail,
         password: password.trim(),
@@ -403,8 +406,12 @@ export const registerUser = createAsyncThunk(
         expenses: [],
       });
 
-      await api.post("/users", newUser);
-      return newUser;
+      const created = await api.post("/users", newUser);
+      // json-server echoes the persisted record (with its final id) — use it
+      // so the slice matches what subsequent GETs will return.
+      const persisted = normalizeUser(created.data);
+      saveLocalUser(persisted);
+      return persisted;
     } catch (err) {
       return rejectWithValue(
         typeof err === "string" ? err : "Registration failed. Make sure JSON Server is running."

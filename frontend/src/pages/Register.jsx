@@ -2,7 +2,7 @@ import { useState } from "react";
 import { User, Mail, Lock, Eye, EyeOff, Loader2, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../store/userslice";
+import { registerUser, loaduser } from "../store/userslice";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -37,7 +37,15 @@ const RegisterPage = () => {
 
     try {
       setLoading(true);
-      await dispatch(registerUser({ username, email, password })).unwrap();
+      // Register AND log the user in immediately. The thunk now persists the
+      // created record and returns it; loaduser hydrates the slice so the
+      // ProtectedRoute gate lets us straight into the dashboard.
+      const result = await dispatch(registerUser({ username, email, password })).unwrap();
+      if (result) {
+        dispatch(loaduser(result));
+        navigate("/home/dashboard");
+        return;
+      }
       navigate("/login");
     } catch (message) {
       setError(message || "Registration failed");

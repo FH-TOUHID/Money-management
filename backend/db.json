@@ -49,33 +49,43 @@
         "occupation": "",
         "currency": "৳",
         "income": 0,
-        "budget": 320,
+        "budget": 10000,
         "monthlyBudgets": {
-          "2026-06": 320
+          "2026-06": 10000
         }
       },
       "theme": {
-        "name": "violet-dark",
-        "label": "Violet Dark",
+        "name": "ocean-dark",
+        "label": "Ocean Dark",
         "mode": "dark",
-        "accent": "#6366F1",
-        "accent2": "#8B5CF6",
+        "accent": "#0EA5E9",
+        "accent2": "#2563EB",
         "success": "#10B981",
-        "danger": "#EF4444",
+        "danger": "#F43F5E",
         "warning": "#F59E0B",
-        "bg": "#0F1117",
-        "sidebar": "#13151F",
-        "card": "#1A1D2E",
-        "cardHover": "#1F2235",
-        "field": "#13151F",
-        "border": "#252838",
-        "border2": "#1E2133",
-        "text": "#E2E5F1",
-        "textSoft": "#C4C9E8",
-        "muted": "#4B5280",
-        "muted2": "#9DA3C8"
+        "bg": "#07111F",
+        "sidebar": "#0A1628",
+        "card": "#101D31",
+        "cardHover": "#152943",
+        "field": "#0A1628",
+        "border": "#223655",
+        "border2": "#1A2A43",
+        "text": "#EAF4FF",
+        "textSoft": "#C2D7EE",
+        "muted": "#557090",
+        "muted2": "#92ABC8"
       },
-      "expenses": []
+      "expenses": [
+        {
+          "id": "8cbe44d1-2e4f-4a9b-8941-7c969cfdf3c7",
+          "title": "treat",
+          "category": "Food",
+          "method": "Cash",
+          "date": "2026-06-26",
+          "amount": 1500,
+          "note": ""
+        }
+      ]
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -39,6 +39,7 @@ const Home = () => {
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [query,           setQuery]           = useState("");
   const [budgetMonth,     setBudgetMonth]     = useState(getMonthKey);
+  const [sidebarOpen,     setSidebarOpen]     = useState(false);
 
   /* ── Derived data — memoised so child components don't re-render needlessly ── */
   const expenses = useMemo(() => currentUser?.expenses || [], [currentUser]);
@@ -94,24 +95,31 @@ const Home = () => {
   }, [sortedExpenses, query]);
 
   const themeMode = useMemo(() => getThemeMode(theme), [theme]);
-  const cssVars = {
-    "--accent":    theme.accent    || "#6366F1",
-    "--accent2":   theme.accent2   || "#8B5CF6",
-    "--success":   theme.success   || "#10B981",
-    "--danger":    theme.danger    || "#EF4444",
-    "--warning":   theme.warning   || "#F59E0B",
-    "--bg":        theme.bg        || "#0F1117",
-    "--sidebar":   theme.sidebar   || "#13151F",
-    "--card":      theme.card      || "#1A1D2E",
-    "--cardHover": theme.cardHover || "#1F2235",
-    "--field":     theme.field     || "#13151F",
-    "--border":    theme.border    || "#252838",
-    "--border2":   theme.border2   || "#1E2133",
-    "--text":      theme.text      || "#E2E5F1",
-    "--textSoft":  theme.textSoft  || "#C4C9E8",
-    "--muted":     theme.muted     || "#4B5280",
-    "--muted2":    theme.muted2    || "#9DA3C8",
-  };
+  // Memoised so the `style` prop on `.app-shell` keeps referential equality
+  // between renders that don't actually change the theme. Without this, every
+  // keystroke in the search box would re-allocate the object and force React
+  // to re-paint the entire shell subtree (incl. lazy-loaded panels).
+  const cssVars = useMemo(
+    () => ({
+      "--accent":    theme.accent    || "#6366F1",
+      "--accent2":   theme.accent2   || "#8B5CF6",
+      "--success":   theme.success   || "#10B981",
+      "--danger":    theme.danger    || "#EF4444",
+      "--warning":   theme.warning   || "#F59E0B",
+      "--bg":        theme.bg        || "#0F1117",
+      "--sidebar":   theme.sidebar   || "#13151F",
+      "--card":      theme.card      || "#1A1D2E",
+      "--cardHover": theme.cardHover || "#1F2235",
+      "--field":     theme.field     || "#13151F",
+      "--border":    theme.border    || "#252838",
+      "--border2":   theme.border2   || "#1E2133",
+      "--text":      theme.text      || "#E2E5F1",
+      "--textSoft":  theme.textSoft  || "#C4C9E8",
+      "--muted":     theme.muted     || "#4B5280",
+      "--muted2":    theme.muted2    || "#9DA3C8",
+    }),
+    [theme],
+  );
 
   /* ── Tab content renderer ── */
   const renderContent = () => {
@@ -629,18 +637,17 @@ const Home = () => {
           box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
         }
         .field::placeholder { color:var(--muted); opacity:.75; font-weight:500; }
+        /* Calendar picker — ALWAYS white regardless of theme so the popup stays legible.
+           Force color-scheme:light everywhere; only tint the *text* shown in the
+           input box to match the active theme. */
         .field.date-field,
         input[type="date"].field,
         input[type="month"].field {
           color:var(--text);
           color-scheme: light;
         }
-        .app-shell[data-mode="dark"] input[type="date"].field,
-        .app-shell[data-mode="dark"] input[type="month"].field {
-          color-scheme: dark;
-        }
-        .app-shell[data-mode="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
-        .app-shell[data-mode="dark"] input[type="month"]::-webkit-calendar-picker-indicator {
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="month"]::-webkit-calendar-picker-indicator {
           filter: invert(0.92) brightness(1.15);
           opacity: 1;
           cursor: pointer;
@@ -763,20 +770,47 @@ const Home = () => {
           .expenses-page { grid-template-columns:1fr; }
           .budget-page { grid-template-columns:1fr; }
         }
+        /* drawer (off-canvas only on mobile) */
+        .sidebar-backdrop {
+          position:fixed; inset:0; z-index:70;
+          background:rgba(0,0,0,.55);
+          opacity:0; pointer-events:none;
+          transition:opacity .2s ease;
+        }
+        .sidebar-backdrop.on { opacity:1; pointer-events:auto; }
+        .sidebar-close { display:none; }
+        .topbar-hamburger {
+          display:none; align-items:center; justify-content:center;
+          width:40px; height:40px; flex-shrink:0;
+          background:var(--card); border:1px solid var(--border);
+          border-radius:11px; color:var(--muted2);
+        }
+        .topbar-title { min-width:0; flex:1; }
+
         @media(max-width:960px) {
           .app-shell { flex-direction:column; }
-          .sidebar {
-            width:100%; height:auto; position:relative;
-            flex-direction:row; flex-wrap:wrap; padding:14px; gap:10px;
-          }
-          .brand { padding-bottom:0; }
-          .nav-list { flex-direction:row; flex-wrap:wrap; gap:4px; }
-          .nav-item { padding:8px 12px; font-size:12.5px; }
-          .budget-box { margin-top:0; flex:1; min-width:180px; }
-          .logout-btn { width:auto; margin-top:0; padding:0 16px; }
-          .main-content { padding:18px; }
+          .topbar-hamburger { display:inline-flex; }
+          .topbar { gap:10px; }
           .topbar h1 { font-size:20px; }
-          .search-box { width:180px; }
+          .main-content { padding:18px; }
+          .sidebar.mobile-drawer {
+            position:fixed; top:0; left:0; bottom:0; height:100vh;
+            z-index:80; width:260px; max-width:85vw;
+            transform:translateX(-105%);
+            transition:transform .25s ease;
+            box-shadow:none;
+          }
+          .sidebar.mobile-drawer.open {
+            transform:translateX(0);
+            box-shadow:0 24px 60px rgba(0,0,0,.45);
+          }
+          .sidebar-close {
+            display:flex; align-items:center; justify-content:center;
+            position:absolute; top:14px; right:14px;
+            width:34px; height:34px; border-radius:10px;
+            background:var(--field); color:var(--muted2);
+            border:1px solid var(--border);
+          }
         }
         @media(max-width:640px) {
           .three-col { grid-template-columns:1fr; }
@@ -791,16 +825,36 @@ const Home = () => {
           .user-pill { display:none; }
           .main-content { padding:14px; gap:14px; }
           .dropdown-panel { right:auto; left:0; min-width:100%; }
+          .topbar h1 { font-size:17px; }
+          .topbar .date-line { font-size:11.5px; }
+        }
+        @media(max-width:480px) {
+          .main-content { padding:10px; gap:12px; }
+          .topbar { flex-wrap:wrap; }
+          .topbar .date-line { display:none; }
+          .topbar-hamburger { width:36px; height:36px; border-radius:10px; }
+          .stat-card { padding:12px; }
+          .stat-card .stat-value { font-size:18px; }
+          .card-title { font-size:13px; }
+          .hero-budget h2 { font-size:18px; }
+          .hero-budget { padding:14px; }
+          .bars30 { height:140px; }
+          .recharts-surface { font-size:11px; }
         }
       `}</style>
 
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setSidebarOpen(false);
+        }}
         profile={profile}
         spent={monthSpent}
         budget={monthBudget}
         budgetMonth={budgetMonth}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
 
       <main className="main-content">
@@ -813,6 +867,7 @@ const Home = () => {
           expenses={sortedExpenses}
           profile={profile}
           onSearchSelect={selectExpense}
+          onOpenSidebar={() => setSidebarOpen(true)}
         />
 
         {reduxError && <div className="error-banner">{reduxError}</div>}

@@ -1,4 +1,4 @@
-import { UserCircle } from "lucide-react";
+import { Menu, UserCircle } from "lucide-react";
 import { memo } from "react";
 import ExpenseSearch from "./ExpenseSearch";
 import NotificationPanel from "./NotificationPanel";
@@ -22,6 +22,7 @@ const Topbar = ({
   expenses,
   profile,
   onSearchSelect,
+  onOpenSidebar = () => {},
 }) => {
   const monthLabel = new Date().toLocaleDateString("en-US", {
     month: "long",
@@ -32,12 +33,21 @@ const Topbar = ({
 
   return (
     <div className="topbar">
-      <div>
-        <p className="date-line">
-          <span>●</span> {monthLabel}
-        </p>
-        <h1>{tabTitles[activeTab] || "Dashboard"}</h1>
-      </div>
+        <button
+          type="button"
+          className="topbar-hamburger"
+          onClick={onOpenSidebar}
+          aria-label="Open menu"
+        >
+          <Menu size={18} />
+        </button>
+
+        <div className="topbar-title">
+          <p className="date-line">
+            <span>●</span> {monthLabel}
+          </p>
+          <h1>{tabTitles[activeTab] || "Dashboard"}</h1>
+        </div>
 
       <div className="top-actions">
         <ExpenseSearch
