@@ -6,7 +6,18 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+# AI / editor local files
+.puku/
+*.db
+*.db-shm
+*.db-wal
 
+# backend runtime data
+backend/db.json
+
+# dependencies
+node_modules/
+dist/
 node_modules
 dist
 dist-ssr
